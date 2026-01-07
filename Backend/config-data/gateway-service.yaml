@@ -1,0 +1,51 @@
+server:
+  port: 8090
+
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+  instance:
+    hostname: gateway-service
+    prefer-ip-address: true # Recomendado para Kubernetes
+
+spring:
+  cloud:
+    gateway:
+      # --- CORRECCIÓN CRÍTICA PARA EL 403 ---
+      globalcors:
+        add-to-simple-url-handler-mapping: true # Permite que OPTIONS pase al manejador de CORS
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns:
+              - "http://127.0.0.1:*"
+              - "http://localhost:*"
+            allowedMethods:
+              - "GET"
+              - "POST"
+              - "PUT"
+              - "DELETE"
+              - "OPTIONS"
+            allowedHeaders: "*"
+            allowCredentials: true
+
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
+      
+      discovery:
+        locator:
+          enabled: true
+
+      routes:
+        # -------- USER + ROLE SERVICE --------
+        - id: user-role-service
+          uri: lb://user-role-service
+          predicates:
+            - Path=/api/users/**, /api/roles/**
+        # -------- INVENTORY SERVICE --------
+        - id: inventory-service
+          uri: lb://inventory-service
+          predicates:
+            - Path=/api/tools/**, /api/catalogs/**
