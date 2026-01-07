@@ -1,0 +1,36 @@
+package com.example.user_role_service.Entity;
+
+import com.example.user_role_service.Service.RoleService;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
+
+//JPA/Hibernate
+@Entity //Mapea a una tabla en la base de datos
+@Table(name = "roles")
+
+//Lombok
+@Data //Genera automaticamente getters, setters y metodos extra
+@NoArgsConstructor //Genera un constructor vacio
+@AllArgsConstructor //Genera un constructor con todos los atributos
+@Builder //Permite ingresar los argumentos del constructor en cualquier orden
+
+public class RoleEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "role_id")
+    private Long roleId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role_name", length = 25)
+    private RoleService.UserRoles roleName;
+
+    @OneToMany(mappedBy = "roles", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserEntity> users = new ArrayList<>();
+}

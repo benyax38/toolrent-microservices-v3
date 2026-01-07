@@ -1,0 +1,27 @@
+package com.example.loan_return_service.Repository;
+
+import com.example.loan_return_service.Entity.LoanEntity;
+import com.example.loan_return_service.Service.LoanService;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Repository
+public interface LoanRepository extends JpaRepository<LoanEntity,Long> {
+
+    // Consulta si es que el cliente asociado al id tiene prestamos vencidos
+    boolean existsByClients_ClientIdAndLoanStatusIn(Long clientId, List<LoanService.LoanStatus> statuses);
+
+    // Busca los prestamos con el estado ingresado que aún no tienen devolucion y que ya paso su fecha limite de entrega
+    List<LoanEntity> findByLoanStatusAndReturnDateIsNullAndDeadlineBefore(
+            LoanService.LoanStatus loanStatus,
+            LocalDateTime deadline
+    );
+
+    // Cuenta los prestamos del cliente con estado "ACTIVO", "POR_PAGAR" o "VENCIDO"
+    long countByClients_ClientIdAndLoanStatusIn(Long clientId, List<LoanService.LoanStatus> statuses);
+
+}
+

@@ -1,0 +1,21 @@
+package com.example.loan_return_service.DTOs;
+
+import lombok.Data;
+
+import java.time.LocalDateTime;
+
+@Data
+
+/*
+ * El objetivo de este DTO es dar la plantilla
+ * del objeto JSON que se ingresa para crear un
+ * prestamo
+ */
+
+public class LoanRequestDTO {
+    private LocalDateTime deadline;
+    private Long clientId;
+    private Long userId;
+    private Long toolId;
+}
+
